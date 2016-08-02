@@ -1,0 +1,30 @@
+<network>
+  <name>ovs-br2</name>
+  <forward mode='bridge'/>
+  <bridge name='ovs-br2'/>
+  <virtualport type='openvswitch'/>
+ <portgroup name='vlan-01' default='yes'>
+  </portgroup>
+  <portgroup name='vlan-10'>
+    <vlan>
+      <tag id='10'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-20'>
+    <vlan>
+      <tag id='20'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-30'>
+    <vlan>
+      <tag id='30'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-all'>
+    <vlan trunk='yes'>
+      <tag id='10'/>
+      <tag id='20'/>
+      <tag id='30'/>
+    </vlan>
+  </portgroup>
+</network>
