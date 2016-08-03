@@ -18,22 +18,8 @@ usage() {
 
 fullUsage() {
     echo "nothing to see here"
-    # include here doc
+    # TODO: include here doc
     echo "nothing to see here"
-}
-
-cloneSys() {
-    echo "Clone $guest from $cloneSource"
-    virt-clone  --connect qemu:///system \
-                --original centos-mininst \
-                --name $guest
-                --file $vmImagePath/$guest.img
-}
-
-editChan() {
-    echo "Edit $guest channel path.."
-    virt-xml $guest --edit --channel \
-        path="$channelPath/domain-$guest/org.qemu.guest_agent.0"
 }
 
 listIntf() {
@@ -80,7 +66,7 @@ attachIntf() {
 
 # main loop
 
-# if only one argument is given to the script
+# if only one argument is given
 if [ $# -eq 1 ]
 then
     if [ $1 == '-h' -o $1 == '--help' ]
@@ -93,7 +79,7 @@ then
     fi
 fi
     
-# cases of more than one argument and no arguments
+# cases of more than one argument and catch-all
 case $2 in
     --attach|-a)
     # we expect 2 parameters after -a

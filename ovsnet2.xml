@@ -27,4 +27,44 @@
       <tag id='30'/>
     </vlan>
   </portgroup>
+  <portgroup name='vlan-50'>
+    <vlan>
+      <tag id='50'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-51'>
+    <vlan>
+      <tag id='51'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-52'>
+    <vlan>
+      <tag id='52'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-53'>
+    <vlan>
+      <tag id='53'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-54'>
+    <vlan>
+      <tag id='54'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-55'>
+    <vlan>
+      <tag id='55'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-56'>
+    <vlan>
+      <tag id='56'/>
+    </vlan>
+  </portgroup>
+  <portgroup name='vlan-57'>
+    <vlan>
+      <tag id='57'/>
+    </vlan>
+  </portgroup>
 </network>
