@@ -46,12 +46,97 @@ PORTGROUP
    # may need to restart the network after making changes
 }
 
+editNetwork() {
+    # remove the trailing network XML tag so that we can append our vlan information
+    netXmlFile=$1
+    sed -i '/\/network/d' $netXmlFile
+
+    # add vlan definition to the network file
+    for (( va=0 ; va<=$vlans-1 ; va++ ))
+    do
+        addVlan ${vlanArr[$va]}
+    done
+
+    # put the trailing network XML tag back on the end of the file
+    echo '</network>' >> $netXmlFile
+
+    # TODO: handle sitations where the network is not started etc.
+    # TODO: better to make this a separate function
+    #
+    # if network exists
+    if virsh net-info $ovsNetwork
+    then
+        virsh net-destroy $ovsNetwork
+        virsh net-undefine $ovsNetwork
+    fi
+
+    #virsh net-info $ovsNetwork
+    virsh net-define ovsnet2.xml
+    virsh net-start $ovsNetwork
+
+}
+
 assignVlan() {
     # create interface on the guest and assign vlan
     # call net-setup script
+    # ./net-setup.sh guest [-a ovsNetwork vlan]
+
+    # for each guest call ./net-setup and assign vlans
+    # guest1: add intf + assign vlan 50 : +1
+    # guest2: add intf + assign vlan 50 : +0
+    # guest2: add intf + assign vlan 51 : +1
+    # guest3: add intf + assign vlan 51 : +0
+    # guest3: add intf + assign vlan 52 : +1
+    # guest4: add intf + assign vlan 52 : +0
+    # guest4: add intf + assign vlan 52 : +1
+    # guest5: add intf + assign vlan 52 : +0
+    #
+    #
+    # 50 51 52
+    # 1-2 2-3 3-4
 
 
-echo 'assignVlan'
+    # number of times to loop is N*2-2
+    # where N is the number of guests
+
+    #g=$guests*2-2
+    gn=1
+    vn=0
+    flag=0;
+    vlArr=("${!1}");
+    gnArr=("${!2}");
+
+    for (( vb=1 ; vb<=$guests-1 ; vb++ ))
+    do
+        # add interface to guest $vb on entering the loop
+        # then set flag = 1
+        # exit loop
+        # -
+        # if flag = 1 then add interface to guest $vb set set flag=1
+        # if flag = 0 then add another interface to guest $vb
+        #
+        if [ $flag -eq 0 ]
+        then
+            flag=1
+            #echo "setting flag $flag"
+            echo "add interface to guest ${gnArr[$gn]}"
+            echo "assign vlan ${vlArr[$vn]}"
+            ./net-setup.sh ${gnArr[$gn]} -a $ovsNetwork ${vlArr[$vn]}
+            let gn=gn+1
+            #let vn=vn+0
+        fi
+
+        if [ $flag -eq 1 ]
+        then
+            flag=0
+            #echo "setting flag $flag"
+            echo "add interface to guest ${gnArr[$gn]}"
+            echo "assign vlan ${vlArr[$vn]}"
+            ./net-setup.sh ${gnArr[$gn]} -a $ovsNetwork ${vlArr[$vn]}
+            #let gn=gn+0
+            let vn=vn+1
+        fi
+    done
 
 }
 
@@ -62,6 +147,8 @@ vlanArr=()
 let guests=$#-1
 let vlans=guests-1
 ovsNetwork=$1
+guestName=( "$@" )
+echo "foobar: ${guestName[1]}"
 
 # vlans needed in service chain: N-1
 # where N is the number of guests
@@ -93,35 +180,12 @@ then
     done
 else
     echo "OVS network does not exist"
-    #exit 1
+    exit 1
 fi
 
 echo "guests: $guests"
 echo "vlans: $vlans"
 
-# TODO: the section below needs to be looked at :( 
-# TODO: net-update network command section xml [--parent-index index] [[--live]
-# remove the trailing network XML tag so that we can append our vlan information
-sed -i '/\/network/d' ovsnet2.xml
-
-for (( va=0 ; va<=$vlans-1 ; va++ ))
-do
-    addVlan ${vlanArr[$va]}
-done
-
-# put the trailing network XML tag back on the end of the file
-echo '</network>' >> ovsnet2.xml
-
-# if network exists
-if virsh net-info $ovsNetwork
-then
-    virsh net-destroy $ovsNetwork
-    virsh net-undefine $ovsNetwork
-fi
-
-#virsh net-info $ovsNetwork
-virsh net-define ovsnet2.xml
-virsh net-start $ovsNetwork
-
-
-#TODO: implement logic to call assignVlan()
+# the network specified should be based on net-dumpxml $ovsNetwork
+editNetwork ovsnet2.xml
+assignVlan vlanArr[@] guestName[@]

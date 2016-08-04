@@ -7,10 +7,6 @@ set -e
 #intfNum=2
 #vlan='Vlan-1'
 
-cloneSource='centos-mininst'
-vmImagePath='vm-images'
-channelPath='/var/lib/libvirt/qemu/channel/target'
-
 usage() {
     echo "Usage: $0 guest [-a ovsNetwork vlan]"
     exit 1;
@@ -61,7 +57,7 @@ attachIntf() {
     # step 2: virt-xml assign vlan
     echo "Assign interface $intfNum on $guest to vlan $vlan"
     virt-xml $guest --edit $intfNum \
-                    --network type=network,source=$ovsNetwork,portgroup=$vlan
+                    --network type=network,source=$ovsNetwork,portgroup=vlan-$vlan
 }
 
 # main loop
