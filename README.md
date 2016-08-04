@@ -12,12 +12,13 @@ demo4 - gateway (172.16.100.1)
 - create ovs bridge called ovs-br1
 ovs-vsctl add-br ovs-br1
 
-- define libvirt ovs network binding
+- define libvirt to ovs network binding
 ./net-define.sh
 
 - run the demo script to create the guests
-TODO: demo requires the guest templates - provide link
+TODO: demo requires the guest templates - provide download link
 TODO: guest template are large (1.1G each) - one template could be used for all
+TODO: ansible to change guest configs instead of individual template images
 
 ./demo.sh
 
@@ -30,10 +31,11 @@ virsh list --all | grep demo
 
 - build the service chain
 TODO: bug: service-chain.sh cannot be run while guests are running
+
 ./service-chain.sh ovs-br1 demo1 demo2 demo3 demo4
 
 - start guests
-for i in {1..4} ; do ./clone.sh demo$i -s ; done
+./guests-start.sh
 
 - test
 1. connect to the console of demo1 and ping 172.16.100.1 (u: root p: skipper999)
@@ -41,8 +43,5 @@ for i in {1..4} ; do ./clone.sh demo$i -s ; done
 3. demo1->demo2->demo3->demo4
 
 clean-up demo
-
-for i in {1..4} ; do ./clone.sh demo$i -d ; done 
-virsh net-destroy ovs-br1
-virsh net-undefine ovs-br1
+./demo-clean.sh
 ```
