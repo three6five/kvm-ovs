@@ -12,6 +12,9 @@ demo4 - gateway (172.16.100.1)
 - create ovs bridge called ovs-br1
 ovs-vsctl add-br ovs-br1
 
+- define libvirt ovs network binding
+./net-define.sh
+
 - run the demo script to create the guests
 TODO: demo requires the guest templates - provide link
 TODO: guest template are large (1.1G each) - one template could be used for all
