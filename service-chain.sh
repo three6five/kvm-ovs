@@ -35,7 +35,7 @@ addVlan() {
 vl=$1
 
 # add the port group
-cat <<PORTGROUP >> ovsnet2.xml
+cat <<PORTGROUP >> $ovsNetwork-import.xml
   <portgroup name='vlan-$vl'>
     <vlan>
       <tag id='$vl'/>
@@ -71,7 +71,7 @@ editNetwork() {
     fi
 
     #virsh net-info $ovsNetwork
-    virsh net-define ovsnet2.xml
+    virsh net-define $ovsNetwork-import.xml
     virsh net-start $ovsNetwork
 
 }
@@ -150,6 +150,9 @@ ovsNetwork=$1
 guestName=( "$@" )
 echo "foobar: ${guestName[1]}"
 
+# dump current network config
+virsh net-dumpxml $ovsNetwork > $ovsNetwork-import.xml
+
 # vlans needed in service chain: N-1
 # where N is the number of guests
 
@@ -157,13 +160,12 @@ if virsh net-info $ovsNetwork
 then
     echo "OVS network exists"
     # dump xml and check for existing vlans
-    # virsh net-dumpxml ovs-br2 | grep '<portgroup'
     
     # find N-1 free VLANs
     for (( v=50 ; v<1000 ; v++ ))
     do
         # <tag id='10'/>
-        if virsh net-dumpxml ovs-br2 | grep "tag id='$v'"
+        if virsh net-dumpxml $ovsNetwork | grep "tag id='$v'"
         then
             echo "vlan $v in use"
         else
@@ -187,5 +189,5 @@ echo "guests: $guests"
 echo "vlans: $vlans"
 
 # the network specified should be based on net-dumpxml $ovsNetwork
-editNetwork ovsnet2.xml
+editNetwork $ovsNetwork-import.xml
 assignVlan vlanArr[@] guestName[@]

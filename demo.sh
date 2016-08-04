@@ -1,6 +1,13 @@
 #!/usr/bin/bash
 
-guestName=demo
+if [ $# -gt 0 ]
+then
+    suffix=$1
+    guestName="demo${suffix}"
+else
+    guestName="demo"
+fi
+
 guestCount=1
 vnf=2
 clientTemplate='client-template'

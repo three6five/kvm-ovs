@@ -12,22 +12,10 @@ demo4 - gateway (172.16.100.1)
 - create ovs bridge called ovs-br1
 ovs-vsctl add-br ovs-br1
 
-- define a network in libvirt
-create network.xml
-<network>
-  <name>ovs-br1</name>
-  <forward mode='bridge'/>
-  <bridge name='ovs-br1'/>
-  <virtualport type='openvswitch'/>
- <portgroup name='vlan-01' default='yes'>
-  </portgroup>
-</network>
-
-virsh net-define network.xml
-virsh net-start ovs-br1
-virsh net-autostart ovs-br1
-
 - run the demo script to create the guests
+TODO: demo requires the guest templates - provide link
+TODO: guest template are large (1.1G each) - one template could be used for all
+
 ./demo.sh
 
 - check if guests are setup
@@ -45,11 +33,13 @@ TODO: bug: service-chain.sh cannot be run while guests are running
 for i in {1..4} ; do ./clone.sh demo$i -s ; done
 
 - test
-connect to the console of demo1 and ping 172.16.100.1
-reboot demo2 or demo3. Pings should stop proving that traffic if following
-demo1->demo2->demo3->demo4
+1. connect to the console of demo1 and ping 172.16.100.1 (u: root p: skipper999)
+2. reboot demo2 or demo3. Pings should stop proving that traffic if following
+3. demo1->demo2->demo3->demo4
 
 clean-up demo
 
 for i in {1..4} ; do ./clone.sh demo$i -d ; done 
+virsh net-destroy ovs-br1
+virsh net-undefine ovs-br1
 ```
