@@ -9,8 +9,8 @@ demo2 - vnf function1 (linux bridge)
 demo3 - vnf function2 (linux bridge)
 demo4 - gateway (172.16.100.1)
 
-- create ovs bridge called ovs-br1
-ovs-vsctl add-br ovs-br1
+- create ovs bridge called ovs-br3
+ovs-vsctl add-br ovs-br3
 
 - define libvirt to ovs network binding
 ./net-define.sh
@@ -32,7 +32,7 @@ virsh list --all | grep demo
 - build the service chain
 TODO: bug: service-chain.sh cannot be run while guests are running
 
-./service-chain.sh ovs-br1 demo1 demo2 demo3 demo4
+./service-chain.sh ovs-br3 demo1 demo2 demo3 demo4
 
 - start guests
 ./guests-start.sh
