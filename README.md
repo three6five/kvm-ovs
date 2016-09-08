@@ -2,6 +2,7 @@
 - requirements
 ovs libvirt libvirt-tools kvm
 bridge br0 defined on the host for guest connectivity (optional)
+RHEL7 or CentOS7 (tested on RHEL7)
 
 - overview
 demo1 - client (172.16.100.2)

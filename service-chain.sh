@@ -148,7 +148,6 @@ let guests=$#-1
 let vlans=guests-1
 ovsNetwork=$1
 guestName=( "$@" )
-echo "foobar: ${guestName[1]}"
 
 # dump current network config
 virsh net-dumpxml $ovsNetwork > $ovsNetwork-import.xml
